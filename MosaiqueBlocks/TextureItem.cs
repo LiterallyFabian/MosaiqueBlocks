@@ -21,8 +21,10 @@ namespace MosaiqueBlocks
             Console.ResetColor();
         }
 
-        private System.Drawing.Color CalculateAverageColor(Bitmap bm)
+
+        private Color CalculateAverageColor(Bitmap bm)
         {
+            //source: https://stackoverflow.com/a/6185448
             int width = bm.Width;
             int height = bm.Height;
             int red = 0;
@@ -31,9 +33,9 @@ namespace MosaiqueBlocks
             int minDiversion = 15; // drop pixels that do not differ by at least minDiversion between color values (white, gray or black)
             int dropped = 0; // keep track of dropped pixels
             long[] totals = new long[] { 0, 0, 0 };
-            int bppModifier = bm.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb ? 3 : 4; // cutting corners, will fail on anything else but 32 and 24 bit images
+            int bppModifier = bm.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4; // cutting corners, will fail on anything else but 32 and 24 bit images
 
-            BitmapData srcData = bm.LockBits(new System.Drawing.Rectangle(0, 0, bm.Width, bm.Height), ImageLockMode.ReadOnly, bm.PixelFormat);
+            BitmapData srcData = bm.LockBits(new Rectangle(0, 0, bm.Width, bm.Height), ImageLockMode.ReadOnly, bm.PixelFormat);
             int stride = srcData.Stride;
             IntPtr Scan0 = srcData.Scan0;
 
@@ -68,7 +70,7 @@ namespace MosaiqueBlocks
             int avgG = (int)(totals[1] / count);
             int avgB = (int)(totals[0] / count);
 
-            return System.Drawing.Color.FromArgb(avgR, avgG, avgB);
+            return Color.FromArgb(avgR, avgG, avgB);
         }
     }
 }
