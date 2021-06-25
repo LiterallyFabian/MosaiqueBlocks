@@ -22,7 +22,7 @@ namespace MosaiqueBlocks
         }
 
 
-        private Color CalculateAverageColor(Bitmap bm)
+        private static Color CalculateAverageColor(Bitmap bm)
         {
             //source: https://stackoverflow.com/a/6185448
             int width = bm.Width;
