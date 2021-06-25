@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace MosaiqueBlocks
 {
@@ -21,56 +20,35 @@ namespace MosaiqueBlocks
             Console.ResetColor();
         }
 
-
-        private static Color CalculateAverageColor(Bitmap bm)
+        private static Color CalculateAverageColor(Bitmap bmp)
         {
-            //source: https://stackoverflow.com/a/6185448
-            int width = bm.Width;
-            int height = bm.Height;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            int minDiversion = 15; // drop pixels that do not differ by at least minDiversion between color values (white, gray or black)
-            int dropped = 0; // keep track of dropped pixels
-            long[] totals = new long[] { 0, 0, 0 };
-            int bppModifier = bm.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4; // cutting corners, will fail on anything else but 32 and 24 bit images
+            //source: https://stackoverflow.com/a/1068399/11420970
+            int r = 0;
+            int g = 0;
+            int b = 0;
 
-            BitmapData srcData = bm.LockBits(new Rectangle(0, 0, bm.Width, bm.Height), ImageLockMode.ReadOnly, bm.PixelFormat);
-            int stride = srcData.Stride;
-            IntPtr Scan0 = srcData.Scan0;
+            int total = 0;
 
-            unsafe
+            for (int x = 0; x < bmp.Width; x++)
             {
-                byte* p = (byte*)(void*)Scan0;
-
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < bmp.Height; y++)
                 {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int idx = (y * stride) + x * bppModifier;
-                        red = p[idx + 2];
-                        green = p[idx + 1];
-                        blue = p[idx];
-                        if (Math.Abs(red - green) > minDiversion || Math.Abs(red - blue) > minDiversion || Math.Abs(green - blue) > minDiversion)
-                        {
-                            totals[2] += red;
-                            totals[1] += green;
-                            totals[0] += blue;
-                        }
-                        else
-                        {
-                            dropped++;
-                        }
-                    }
+                    Color clr = bmp.GetPixel(x, y);
+
+                    r += clr.R;
+                    g += clr.G;
+                    b += clr.B;
+
+                    total++;
                 }
             }
 
-            int count = width * height - dropped;
-            int avgR = (int)(totals[2] / count);
-            int avgG = (int)(totals[1] / count);
-            int avgB = (int)(totals[0] / count);
+            //Calculate average
+            r /= total;
+            g /= total;
+            b /= total;
 
-            return Color.FromArgb(avgR, avgG, avgB);
+            return Color.FromArgb(r, g, b);
         }
     }
 }
