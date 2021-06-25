@@ -22,7 +22,7 @@ namespace MosaiqueBlocks
 
         private static Color CalculateAverageColor(Bitmap bmp)
         {
-            //source: https://stackoverflow.com/a/1068399/11420970
+            //source: https://stackoverflow.com/a/1068399
             int r = 0;
             int g = 0;
             int b = 0;
