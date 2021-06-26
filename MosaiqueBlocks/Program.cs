@@ -9,7 +9,15 @@ namespace MosaiqueBlocks
 {
     internal class Program
     {
-        static List<TextureItem> TextureItems;
+        private static List<TextureItem> TextureItems;
+
+        private static string[] BannedPatterns =
+        {
+            "minecraft/textures\\font",
+            "water_overlay.png",
+            "minecraft/textures\\colormap"
+        };
+
         private static void Main(string[] args)
         {
             Console.Write("Path (assets/minecraft/textures):");
@@ -18,7 +26,7 @@ namespace MosaiqueBlocks
             string[] files = Directory.GetFiles(path, "*.png", SearchOption.AllDirectories);
             TextureItems = GetTextureItems(files);
 
-            foreach(string file in files) CreateMosaiqueBlock(file);
+            foreach (string file in files) CreateMosaiqueBlock(file);
         }
 
         private static List<TextureItem> GetTextureItems(string[] files)
@@ -59,8 +67,15 @@ namespace MosaiqueBlocks
 
         private static void CreateMosaiqueBlock(string path)
         {
+            if (BannedPatterns.Any(path.Contains))
+            {
+                Console.WriteLine("skipped " + path);
+                return;
+            }
+
             Bitmap sourceImage = new Bitmap(path);
             Bitmap mosaiqueImage = new Bitmap(sourceImage.Width * 16, sourceImage.Height * 16);
+
             using (Graphics g = Graphics.FromImage(mosaiqueImage))
             {
                 for (int y = 0; y < sourceImage.Height; ++y)
@@ -70,7 +85,7 @@ namespace MosaiqueBlocks
                         Color pixel = sourceImage.GetPixel(x, y);
                         if (pixel.A > 255 / 2)
                         {
-                            g.DrawImage(TextureItems[closestColor(pixel)].Bitmap, new Point(x*16, y*16));
+                            g.DrawImage(TextureItems[closestColor(pixel)].Bitmap, new Point(x * 16, y * 16));
                         }
                     }
                 }
